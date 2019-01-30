@@ -139,8 +139,8 @@ case class Target(
       if (!licenses.isEmpty) renderList(Doc.text("["), licenses.toList, Doc.text("]"))(quote)
       else Doc.empty
 
-    def keys(neverlink: Boolean) =
-      sortKeys(targetType, name.name + (if(neverlink) "_EXT" else ""), List(
+    def keys(neverlink: Boolean) = {
+      val l = List(
         visibilityDoc,
         "deps" -> labelList(deps),
         "licenses" -> renderLicenses(licenses),
@@ -148,9 +148,16 @@ case class Target(
         "jars" -> labelList(jars),
         "exports" -> labelList(exports),
         "runtime_deps" -> labelList(runtimeDeps),
-        "exported_plugins" -> renderExportedPlugins(processorClasses),
-        "neverlink" -> (if (neverlink) int(1) else int(0))
-      )) + renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
+        "exported_plugins" -> renderExportedPlugins(processorClasses)
+      )
+
+      val nl = List( "neverlink" -> (if (neverlink) int(1) else int(0)) )
+
+      sortKeys(
+        targetType,
+        name.name + (if(neverlink) "_EXT" else ""), l ++ (if(neverlink) nl else Nil)) +
+      renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
+    }
 
     val supportsNeverlink: Boolean =
       (lang, kind) match {
