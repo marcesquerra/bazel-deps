@@ -149,6 +149,17 @@ case class Target(
         "neverlink" -> bool(neverlink)
       )) + renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
 
-    keys(true) + keys(false)
+    val supportsNeverlink: Boolean =
+      (lang, kind) match {
+            case (Language.Java, _)                    => true
+            case (Language.Kotlin, _)                  => false // I don't know if Kotlin supports neverlink, and I'm not really interested on it right now
+            case (Language.Scala(_, _), Target.Import) => true
+            case (Language.Scala(_, _), _)             => true
+          }
+
+    if (supportsNeverlink)
+      keys(true) + keys(false)
+    else
+      keys(false)
   }
 }
