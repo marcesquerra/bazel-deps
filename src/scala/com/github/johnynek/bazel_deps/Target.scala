@@ -16,6 +16,9 @@ object Target {
   def bool(b: Boolean): Doc =
     Doc.text("%b".format(b).capitalize)
 
+  def int(i: Int): Doc =
+    Doc.text(i.toString)
+
   def fqnToLabelFragment(fqn: String): String =
     fqn.toLowerCase.replaceAll("[^a-z0-9]", "_")
 
@@ -146,7 +149,7 @@ case class Target(
         "exports" -> labelList(exports),
         "runtime_deps" -> labelList(runtimeDeps),
         "exported_plugins" -> renderExportedPlugins(processorClasses),
-        "neverlink" -> bool(neverlink)
+        "neverlink" -> (if (neverlink) int(1) else int(0))
       )) + renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
 
     val supportsNeverlink: Boolean =
