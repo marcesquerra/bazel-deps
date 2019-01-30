@@ -136,15 +136,19 @@ case class Target(
       if (!licenses.isEmpty) renderList(Doc.text("["), licenses.toList, Doc.text("]"))(quote)
       else Doc.empty
 
-    sortKeys(targetType, name.name, List(
-      visibilityDoc,
-      "deps" -> labelList(deps),
-      "licenses" -> renderLicenses(licenses),
-      "srcs" -> sources.render,
-      "jars" -> labelList(jars),
-      "exports" -> labelList(exports),
-      "runtime_deps" -> labelList(runtimeDeps),
-      "exported_plugins" -> renderExportedPlugins(processorClasses)
-    )) + renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
+    def keys(neverlink: Boolean) =
+      sortKeys(targetType, name.name + (if(neverlink) "_EXT" else ""), List(
+        visibilityDoc,
+        "deps" -> labelList(deps),
+        "licenses" -> renderLicenses(licenses),
+        "srcs" -> sources.render,
+        "jars" -> labelList(jars),
+        "exports" -> labelList(exports),
+        "runtime_deps" -> labelList(runtimeDeps),
+        "exported_plugins" -> renderExportedPlugins(processorClasses),
+        "neverlink" -> bool(neverlink)
+      )) + renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
+
+    keys(true) + keys(false)
   }
 }
