@@ -16,6 +16,9 @@ object Target {
   def bool(b: Boolean): Doc =
     Doc.text("%b".format(b).capitalize)
 
+  def int(i: Int): Doc =
+    Doc.text(i.toString)
+
   def fqnToLabelFragment(fqn: String): String =
     fqn.toLowerCase.replaceAll("[^a-z0-9]", "_")
 
@@ -136,15 +139,39 @@ case class Target(
       if (!licenses.isEmpty) renderList(Doc.text("["), licenses.toList, Doc.text("]"))(quote)
       else Doc.empty
 
-    sortKeys(targetType, name.name, List(
-      visibilityDoc,
-      "deps" -> labelList(deps),
-      "licenses" -> renderLicenses(licenses),
-      "srcs" -> sources.render,
-      "jars" -> labelList(jars),
-      "exports" -> labelList(exports),
-      "runtime_deps" -> labelList(runtimeDeps),
-      "exported_plugins" -> renderExportedPlugins(processorClasses)
-    )) + renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
+    def keys(neverlink: Boolean) = {
+      val l = List(
+        visibilityDoc,
+        "deps" -> labelList(deps),
+        "licenses" -> renderLicenses(licenses),
+        "srcs" -> sources.render,
+        "jars" -> labelList(jars),
+        "exported_plugins" -> renderExportedPlugins(processorClasses)
+      )
+
+      val nl = List( "neverlink" -> (if (neverlink) int(1) else int(0)) )
+      val rd = List(
+        "exports" -> labelList(exports),
+        "runtime_deps" -> labelList(runtimeDeps)
+      )
+
+      sortKeys(
+        targetType,
+        name.name + (if(neverlink) "_EXT" else ""), l ++ (if(neverlink) nl else rd)) +
+      renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
+    }
+
+    val supportsNeverlink: Boolean =
+      (lang, kind) match {
+            case (Language.Java, _)                    => true
+            case (Language.Kotlin, _)                  => false // I don't know if Kotlin supports neverlink, and I'm not really interested on it right now
+            case (Language.Scala(_, _), Target.Import) => true
+            case (Language.Scala(_, _), _)             => false
+          }
+
+    if (supportsNeverlink)
+      keys(true) + keys(false)
+    else
+      keys(false)
   }
 }
