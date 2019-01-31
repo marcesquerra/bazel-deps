@@ -146,16 +146,18 @@ case class Target(
         "licenses" -> renderLicenses(licenses),
         "srcs" -> sources.render,
         "jars" -> labelList(jars),
-        "exports" -> labelList(exports),
-        "runtime_deps" -> labelList(runtimeDeps),
         "exported_plugins" -> renderExportedPlugins(processorClasses)
       )
 
       val nl = List( "neverlink" -> (if (neverlink) int(1) else int(0)) )
+      val rd = List(
+        "exports" -> labelList(exports),
+        "runtime_deps" -> labelList(runtimeDeps)
+      )
 
       sortKeys(
         targetType,
-        name.name + (if(neverlink) "_EXT" else ""), l ++ (if(neverlink) nl else Nil)) +
+        name.name + (if(neverlink) "_EXT" else ""), l ++ (if(neverlink) nl else rd)) +
       renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
     }
 
