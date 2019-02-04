@@ -96,7 +96,11 @@ case class Target(
       case Language.Scala(_, _) => "scala"
     }
 
-    val targetType = Doc.text(s"${langName}_${kind}")
+    def targetType(neverlink: Boolean) =
+      Doc.text(
+        if(neverlink && lang == Language.Java) "java_import"
+        else s"${langName}_${kind}"
+      )
 
     def sortKeys(tt: Doc, name: String, items: List[(String, Doc)]): Doc = {
       // everything has a name
@@ -140,12 +144,18 @@ case class Target(
       else Doc.empty
 
     def keys(neverlink: Boolean) = {
+      val extraJars =
+        if(lang == Language.Java && neverlink)
+          exports
+        else
+          Nil
+
       val l = List(
         visibilityDoc,
         "deps" -> labelList(deps),
         "licenses" -> renderLicenses(licenses),
         "srcs" -> sources.render,
-        "jars" -> labelList(jars),
+        "jars" -> labelList(jars ++ extraJars),
         "exported_plugins" -> renderExportedPlugins(processorClasses)
       )
 
@@ -156,7 +166,7 @@ case class Target(
       )
 
       sortKeys(
-        targetType,
+        targetType(neverlink),
         name.name + (if(neverlink) "_EXT" else ""), l ++ (if(neverlink) nl else rd)) +
       renderPlugins(processorClasses, exports, generatesApi, licenses) + Doc.line
     }
