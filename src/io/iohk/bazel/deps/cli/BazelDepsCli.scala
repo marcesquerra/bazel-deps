@@ -41,6 +41,7 @@ object BazelDepsCli {
                 scalaFolder.toFile.mkdirs()
                 println()
                 println("Going to generate the 'workspace.bzl' file")
+                write(target / "BUILD", "")
                 write(target / "workspace.bzl", templates.workspace(allDeps))
                 println("'workspace.bzl' file generated\n")
                 println("Going to generate the 'deps.bzl' file")

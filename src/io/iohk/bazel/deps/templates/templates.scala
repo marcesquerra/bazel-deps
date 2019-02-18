@@ -26,6 +26,9 @@ package object templates {
         |_default_scalac_jvm_flags = [
         |${defaultScalacJvmFlags.map(f => s"""    "${f.trim}",\n""").mkString}]
         |
+        |def _distinct(items):
+        |  return depset(items).to_list()
+        |
         |def _asNeverlink(label):
         |  if ":" in label:
         |    idx = label.rindex(":")
@@ -49,10 +52,12 @@ package object templates {
         |             for dep in dependencies(ext, neverlink)]
         |    realname = ("%s_EXT" % name) if neverlink else name
         |    realdeps = _asNeverlinks(deps) if neverlink else deps
+        |    calculated_deps = _distinct(realdeps + allexternal)
+        |    calculated_exports = _distinct(allexternal)
         |    native_scala_library(
         |        name = realname,
-        |        deps = realdeps + allexternal,
-        |        exports = allexternal,
+        |        deps = calculated_deps,
+        |        exports = calculated_exports,
         |        srcs = native.glob(["**/*.scala"], exclude = ["test/**/*"]) if srcs == None else srcs,
         |        scalac_jvm_flags = scalac_jvm_flags,
         |        visibility = visibility,
@@ -72,9 +77,13 @@ package object templates {
         |        scalac_jvm_flags = scalac_jvm_flags,       visibility = visibility,
         |        neverlink        = True,                   **kwargs
         |    )
+        |    allexternal = [dep
+        |             for ext in external
+        |             for dep in dependencies(ext, False)]
+        |    realdeps = deps
         |    scala_repl(
         |        name             = "%s_repl" % name,
-        |        deps             = deps + [name],
+        |        deps             = _distinct(realdeps + allexternal + [name]),
         |        scalac_jvm_flags = scalac_jvm_flags,
         |    )
         |
@@ -85,7 +94,7 @@ package object templates {
         |    realname= ("%s_EXT" % name) if neverlink else name
         |    native_scala_binary(
         |        name = realname,
-        |        deps = deps + allexternal,
+        |        deps = _distinct(deps + allexternal),
         |        srcs = native.glob(["**/*.scala"], exclude = ["test/**/*"]) if srcs == None else srcs,
         |        scalac_jvm_flags = scalac_jvm_flags,
         |        main_class = main_class,
@@ -114,9 +123,12 @@ package object templates {
         |        neverlink = False,
         |        **kwargs
         |    )
+        |    allexternal = [dep
+        |             for ext in external
+        |             for dep in dependencies(ext, False)]
         |    scala_repl(
         |        name = "%s_repl" % name,
-        |        deps = deps + ["__%s_binary_lib" % name],
+        |        deps = _distinct(deps + allexternal + ["__%s_binary_lib" % name]),
         |        scalac_jvm_flags = scalac_jvm_flags,
         |    )
         |
@@ -155,7 +167,7 @@ package object templates {
 
   def dependencies(mavenCoordinates: Map[Coordinates.Versioned, Set[Coordinates.Versioned]]): String = {
     def toEntry(k: Coordinates.Versioned, vs: Set[Coordinates.Versioned], neverlink: Boolean): String =
-      s"""  "${k.unversioned.asCompactString}": [${vs.map(_.unversioned.asBazelWorkspaceName(neverlink)).map{v => s""""@$v""""}.mkString(", ")}],"""
+      s"""  "${k.unversioned.asCompactString}": ["@${k.unversioned.asBazelWorkspaceName(neverlink)}"${vs.map(_.unversioned.asBazelWorkspaceName(neverlink)).map{v => s""", "@$v""""}.mkString}],"""
     s"""|${notice("# ")}
         |
         |_lookup = {
