@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "maven_aether_provider_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "maven_aether_provider",
     exports = [
         "//external:jar/org/apache/maven/maven_aether_provider"
@@ -24,6 +32,14 @@ java_library(
 
 
 java_library(
+    name = "maven_artifact_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "maven_artifact",
     exports = [
         "//external:jar/org/apache/maven/maven_artifact"
@@ -38,6 +54,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "maven_builder_support_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
 
 java_library(
     name = "maven_builder_support",
@@ -56,6 +80,14 @@ java_library(
 
 
 java_library(
+    name = "maven_model_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "maven_model",
     exports = [
         "//external:jar/org/apache/maven/maven_model"
@@ -70,6 +102,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "maven_model_builder_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
 
 java_library(
     name = "maven_model_builder",
@@ -94,6 +134,14 @@ java_library(
 
 
 java_library(
+    name = "maven_repository_metadata_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "maven_repository_metadata",
     exports = [
         "//external:jar/org/apache/maven/maven_repository_metadata"
@@ -109,6 +157,14 @@ java_library(
 
 
 java_library(
+    name = "maven_settings_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "maven_settings",
     exports = [
         "//external:jar/org/apache/maven/maven_settings"
@@ -122,6 +178,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "maven_settings_builder_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
 
 java_library(
     name = "maven_settings_builder",

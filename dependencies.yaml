@@ -1,6 +1,6 @@
 options:
   buildHeader: [ "load(\"@io_bazel_rules_scala//scala:scala_import.bzl\", \"scala_import\")" ]
-  languages: [ "java", "scala:2.11.8" ]
+  languages: [ "java", "scala:2.12.7" ]
   resolverType: "coursier"
   resolvers:
     - id: "mavencentral"
@@ -10,7 +10,20 @@ options:
   transitivity: runtime_deps
   versionConflictPolicy: highest
 
+scalaVersionSufix: "2.12"
 dependencies:
+
+  com.fasterxml.jackson.dataformat:
+    jackson-dataformat-yaml:
+      version: "2.9.6"
+      lang: java
+
+  org.json4s:
+    json4s:
+      version: "3.6.4"
+      lang: scala
+      modules: [ "jackson", "ast", "core" ]
+
   com.chuusai:
     shapeless:
       lang: scala
@@ -50,8 +63,8 @@ dependencies:
   io.get-coursier:
     coursier:
       lang: scala
-      modules: [ "", "cache" ]
-      version: "1.1.0-M7"
+      modules: [ "", "cache", "core" ]
+      version: "1.1.0-M11-1"
 
   org.apache.maven:
     maven:

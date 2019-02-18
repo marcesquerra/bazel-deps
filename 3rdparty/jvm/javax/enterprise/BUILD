@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "cdi_api_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "cdi_api",
     exports = [
         "//external:jar/javax/enterprise/cdi_api"

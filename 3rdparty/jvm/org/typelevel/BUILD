@@ -1,11 +1,22 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 scala_import(
+    name = "cats_core_EXT",
+    jars = [
+        "//external:jar/org/typelevel/cats_core_2_12"
+    ],
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+scala_import(
     name = "cats_core",
     exports = [
         ":cats_kernel"
     ],
     jars = [
-        "//external:jar/org/typelevel/cats_core_2_11"
+        "//external:jar/org/typelevel/cats_core_2_12"
     ],
     runtime_deps = [
         "//3rdparty/jvm/org/scala_lang:scala_library",
@@ -20,9 +31,20 @@ scala_import(
 
 
 scala_import(
+    name = "cats_free_EXT",
+    jars = [
+        "//external:jar/org/typelevel/cats_free_2_12"
+    ],
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+scala_import(
     name = "cats_free",
     jars = [
-        "//external:jar/org/typelevel/cats_free_2_11"
+        "//external:jar/org/typelevel/cats_free_2_12"
     ],
     runtime_deps = [
         "//3rdparty/jvm/org/scala_lang:scala_library",
@@ -38,9 +60,20 @@ scala_import(
 
 
 scala_import(
+    name = "cats_kernel_EXT",
+    jars = [
+        "//external:jar/org/typelevel/cats_kernel_2_12"
+    ],
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+scala_import(
     name = "cats_kernel",
     jars = [
-        "//external:jar/org/typelevel/cats_kernel_2_11"
+        "//external:jar/org/typelevel/cats_kernel_2_12"
     ],
     runtime_deps = [
         "//3rdparty/jvm/org/scala_lang:scala_library"
@@ -53,9 +86,20 @@ scala_import(
 
 
 scala_import(
+    name = "cats_macros_EXT",
+    jars = [
+        "//external:jar/org/typelevel/cats_macros_2_12"
+    ],
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+scala_import(
     name = "cats_macros",
     jars = [
-        "//external:jar/org/typelevel/cats_macros_2_11"
+        "//external:jar/org/typelevel/cats_macros_2_12"
     ],
     runtime_deps = [
         "//3rdparty/jvm/org/scala_lang:scala_library",
@@ -69,9 +113,20 @@ scala_import(
 
 
 scala_import(
+    name = "machinist_EXT",
+    jars = [
+        "//external:jar/org/typelevel/machinist_2_12"
+    ],
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+scala_import(
     name = "machinist",
     jars = [
-        "//external:jar/org/typelevel/machinist_2_11"
+        "//external:jar/org/typelevel/machinist_2_12"
     ],
     runtime_deps = [
         "//3rdparty/jvm/org/scala_lang:scala_library",
@@ -85,9 +140,20 @@ scala_import(
 
 
 scala_import(
+    name = "macro_compat_EXT",
+    jars = [
+        "//external:jar/org/typelevel/macro_compat_2_12"
+    ],
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+scala_import(
     name = "macro_compat",
     jars = [
-        "//external:jar/org/typelevel/macro_compat_2_11"
+        "//external:jar/org/typelevel/macro_compat_2_12"
     ],
     runtime_deps = [
         "//3rdparty/jvm/org/scala_lang:scala_library"
@@ -100,9 +166,20 @@ scala_import(
 
 
 scala_import(
+    name = "paiges_core_EXT",
+    jars = [
+        "//external:jar/org/typelevel/paiges_core_2_12"
+    ],
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+scala_import(
     name = "paiges_core",
     jars = [
-        "//external:jar/org/typelevel/paiges_core_2_11"
+        "//external:jar/org/typelevel/paiges_core_2_12"
     ],
     runtime_deps = [
         "//3rdparty/jvm/org/scala_lang:scala_library"

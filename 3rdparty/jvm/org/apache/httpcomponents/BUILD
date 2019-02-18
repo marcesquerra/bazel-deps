@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "httpclient_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "httpclient",
     exports = [
         "//external:jar/org/apache/httpcomponents/httpclient"
@@ -14,6 +22,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "httpcore_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
 
 java_library(
     name = "httpcore",

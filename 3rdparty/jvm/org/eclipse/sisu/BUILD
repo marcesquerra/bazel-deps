@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "org_eclipse_sisu_inject_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "org_eclipse_sisu_inject",
     exports = [
         "//external:jar/org/eclipse/sisu/org_eclipse_sisu_inject"
@@ -10,6 +18,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "org_eclipse_sisu_plexus_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
 
 java_library(
     name = "org_eclipse_sisu_plexus",

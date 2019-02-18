@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "plexus_cipher_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "plexus_cipher",
     exports = [
         "//external:jar/org/sonatype/plexus/plexus_cipher"
@@ -10,6 +18,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "plexus_sec_dispatcher_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
 
 java_library(
     name = "plexus_sec_dispatcher",

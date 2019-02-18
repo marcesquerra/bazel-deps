@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "jackson_annotations_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "jackson_annotations",
     exports = [
         "//external:jar/com/fasterxml/jackson/core/jackson_annotations"
@@ -12,6 +20,14 @@ java_library(
 
 
 java_library(
+    name = "jackson_core_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "jackson_core",
     exports = [
         "//external:jar/com/fasterxml/jackson/core/jackson_core"
@@ -22,6 +38,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "jackson_databind_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
 
 java_library(
     name = "jackson_databind",

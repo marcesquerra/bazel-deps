@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "plexus_classworlds_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "plexus_classworlds",
     exports = [
         "//external:jar/org/codehaus/plexus/plexus_classworlds"
@@ -10,6 +18,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "plexus_component_annotations_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
 
 java_library(
     name = "plexus_component_annotations",
@@ -24,6 +40,14 @@ java_library(
 
 
 java_library(
+    name = "plexus_interpolation_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
+
+java_library(
     name = "plexus_interpolation",
     exports = [
         "//external:jar/org/codehaus/plexus/plexus_interpolation"
@@ -34,6 +58,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "plexus_utils_EXT",
+    neverlink = 1,
+    visibility = [
+        "//3rdparty/jvm:__subpackages__"
+    ]
+)
 
 java_library(
     name = "plexus_utils",

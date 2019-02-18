@@ -1,5 +1,13 @@
 load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
 java_library(
+    name = "aether_api_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "aether_api",
     exports = [
         "//external:jar/org/eclipse/aether/aether_api"
@@ -10,6 +18,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "aether_connector_basic_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
 
 java_library(
     name = "aether_connector_basic",
@@ -29,6 +45,14 @@ java_library(
 
 
 java_library(
+    name = "aether_impl_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "aether_impl",
     exports = [
         "//external:jar/org/eclipse/aether/aether_impl"
@@ -46,6 +70,14 @@ java_library(
 
 
 java_library(
+    name = "aether_spi_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "aether_spi",
     exports = [
         "//external:jar/org/eclipse/aether/aether_spi"
@@ -59,6 +91,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "aether_transport_file_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
 
 java_library(
     name = "aether_transport_file",
@@ -78,6 +118,14 @@ java_library(
 
 
 java_library(
+    name = "aether_transport_http_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+java_library(
     name = "aether_transport_http",
     exports = [
         "//external:jar/org/eclipse/aether/aether_transport_http"
@@ -95,6 +143,14 @@ java_library(
 )
 
 
+
+java_library(
+    name = "aether_util_EXT",
+    neverlink = 1,
+    visibility = [
+        "//visibility:public"
+    ]
+)
 
 java_library(
     name = "aether_util",

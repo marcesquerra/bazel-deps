@@ -1,8 +1,12 @@
 package io.iohk.bazel.deps.model.maven
 
+import io.iohk.bazel.deps.yaml._
+
 case class Version(asString: String)
 
 object Version {
+  implicit val versionRead: Read[Version] = read[String].map{s => Version(s)}
+
   private def isNum(c: Char): Boolean =
     ('0' <= c) && (c <= '9')
   /**

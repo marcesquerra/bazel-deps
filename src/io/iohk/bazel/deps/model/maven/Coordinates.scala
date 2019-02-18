@@ -1,5 +1,8 @@
 package io.iohk.bazel.deps.model.maven
 
+import java.security.MessageDigest
+
+
 sealed trait Coordinates {
   val group: Group
   val artifactId: ArtifactId
@@ -10,75 +13,74 @@ sealed trait Coordinates {
 
 object Coordinates {
 
-  case class Versioned(override group: Group, override artifactId: ArtifactId, version: Version) extends Coordinates {
+  case class Versioned(
+    override val group: Group,
+    override val artifactId: ArtifactId,
+                 version: Version,
+             val scope: Option[String]) extends Coordinates {
     override def unversioned: Coordinates.Unversioned = Coordinates.Unversioned(group, artifactId)
     override def asString: String = s"${group.asString}:${artifactId.asString}:${version.asString}"
 
-//    def toDependencies(l: Language): Dependencies =
-//      Dependencies(Map(group ->
-//        Map(ArtifactOrProject(artifact.asString) ->
-//          ProjectRecord(l, Some(version), None, None, None, None, None))))
-  }
-
-  case class Unversioned(override group: Group, artifactId: ArtifactId) extends Coordinates {
-    override def asString: String = s"${group.asString}:${artifactId.asString}"
-    override def unversioned: Coordinates.Unversioned = this
-
-    /** This is a bazel-safe name to use as a remote repo name */
-    def toBazelRepoName(namePrefix: NamePrefix): String =
-      s"${namePrefix.asString}$asString".map {
-        case '.' => "_"  // todo, we should have something such that if a != b this can't be equal, but this can
-        case '-' => "_"
-        case ':' => "_"
-        case other => other
-      }
-      .mkString
-
-    /**
-      * The bazel-safe target name
-      */
-    def toTargetName: String =
-      artifact.asString.map {
-        case ':' => '_'
-        case o => o
-      }
-
-    def toBindingName(namePrefix: NamePrefix): String = {
-      val g = group.asString.map {
-        case '.' => '/'
-        case o => o
-      }
-      s"jar/${namePrefix.asString}$g/${toTargetName}".map {
-        case '.' | '-' => '_'
-        case o => o
+    override def equals(that: Any): Boolean = {
+      that match {
+        case a: Versioned => this.asString == a.asString
+        case _ => false
       }
     }
-    def bindTarget(namePrefix: NamePrefix): String = s"//external:${toBindingName(namePrefix)}"
+
+    override def hashCode: Int = asString.hashCode
+    def url: String =
+      s"https://repo1.maven.org/maven2/${group.asString.replaceAllLiterally(".", "/")}/${artifactId.asString}/${version.asString}/${artifactId.asString}-${version.asString}.jar"
+
+
+    private lazy val jarContent: Array[Byte] = {
+      import java.io.BufferedInputStream
+      import java.io.InputStream
+      import java.net.URL
+
+      def inputStreamToByteArray(is: InputStream): Array[Byte] =
+        Iterator continually is.read takeWhile (-1 !=) map (_.toByte) toArray
+
+      val u = new URL(url)
+      val uc = u.openConnection()
+      val raw = uc.getInputStream()
+      val in = new BufferedInputStream(raw)
+      val r = inputStreamToByteArray(in)
+      in.close()
+      raw.close()
+      r
+    }
+
+    lazy val sha256: String =
+      MessageDigest.getInstance("SHA-256")
+        .digest(jarContent)
+        .map("%02x".format(_)).mkString
+  }
+
+  case class Unversioned(override val group: Group, override val artifactId: ArtifactId) extends Coordinates {
+    override def asString: String = s"${group.asString}:${artifactId.asString}"
+    def asCompactString: String = s"${group.asString}:${artifactId.asCompactString}"
+    override def unversioned: Coordinates.Unversioned = this
+
+    override def equals(that: Any): Boolean = {
+      that match {
+        case a: Unversioned => this.asString == a.asString
+        case _ => false
+      }
+    }
+
+    override def hashCode: Int = asString.hashCode
+
+    def asBazelWorkspaceName(neverlink: Boolean): String =
+      asString.flatMap {
+        case '_' => "__"
+        case '.' => "___"
+        case ':' => "_and_"
+        case '-' => "_ds_"
+        case c if c.isLetter || c.isDigit => c.toString
+        case otherwise => s"_0x${"%04x".format(otherwise.toInt)}"
+      } + (if (neverlink) "__NEVERLINK" else "")
+
   }
 }
 
-//
-//object MavenCoordinate {
-//  def apply(s: String): MavenCoordinate =
-//    parse(s) match {
-//      case Validated.Valid(m) => m
-//      case Validated.Invalid(NonEmptyList(msg, Nil)) => sys.error(msg)
-//      case _ => sys.error("unreachable (we have only a single error)")
-//    }
-//
-//  def parse(s: String): ValidatedNel[String, MavenCoordinate] =
-//    s.split(":") match {
-//      case Array(g, a, v) => Validated.valid(MavenCoordinate(MavenGroup(g), MavenArtifactId(a), Version(v)))
-//      case other => Validated.invalidNel(s"expected exactly three :, got $s")
-//    }
-//
-//  def apply(u: UnversionedCoordinate, v: Version): MavenCoordinate =
-//    MavenCoordinate(u.group, u.artifact, v)
-//
-//  implicit def mvnCoordOrd: Ordering[MavenCoordinate] = Ordering.by { m: MavenCoordinate =>
-//    (m.group.asString, m.artifact.asString, m.version)
-//  }
-//}
-
-
-//
