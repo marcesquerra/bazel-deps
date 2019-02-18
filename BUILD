@@ -1,7 +1,12 @@
 # Top level Bazel run alias for parseproject
 alias(
-    name = "parse",
+    name = "parse-old",
     actual = "//src/scala/com/github/johnynek/bazel_deps:parseproject"
+)
+
+alias(
+    name = "parse",
+    actual = "//src/io/iohk/bazel/deps/cli:cli"
 )
 
 load("@io_bazel_rules_scala//scala:scala_toolchain.bzl", "scala_toolchain")
