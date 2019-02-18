@@ -132,10 +132,13 @@ package object templates {
         |        scalac_jvm_flags = scalac_jvm_flags,
         |    )
         |
-        |def scala_test(name, srcs = None, deps = [], resources = None, scalac_jvm_flags = _default_scalac_jvm_flags, **kwargs):
+        |def scala_test(name, srcs = None, deps = [], external = [], resources = None, scalac_jvm_flags = _default_scalac_jvm_flags, **kwargs):
+        |    allexternal = [dep
+        |             for ext in external
+        |             for dep in dependencies(ext, False)]
         |    native_scala_test(
         |        name = name,
-        |        deps = deps,
+        |        deps = _distinct(deps + allexternal),
         |        resources = native.glob(["test-resources/**/*"]) if resources == None else resources,
         |        srcs = native.glob(["test/**/*.scala"]) if srcs == None else srcs,
         |        scalac_jvm_flags = scalac_jvm_flags,
