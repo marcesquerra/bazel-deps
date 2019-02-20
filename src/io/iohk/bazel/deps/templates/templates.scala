@@ -292,7 +292,7 @@ package object templates {
           |        "@${u.asBazelWorkspaceName(neverlink, true)}",
           |    ],
           |    visibility = ['//visibility:public'],
-          |    neverlink = 0
+          |    neverlink = ${if(neverlink) "1" else "0"}
           |)
           |""".stripMargin
     s"""|${notice("#")}
