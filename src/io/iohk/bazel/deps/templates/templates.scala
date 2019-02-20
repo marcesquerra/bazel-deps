@@ -46,14 +46,15 @@ package object templates {
         |def _asNeverlinks(labels):
         |  return [_asNeverlink(label) for label in labels]
         |
-        |def _scala_library_impl(name, srcs, deps, external, scalac_jvm_flags, visibility, neverlink, **kwargs):
+        |def _scala_library_impl(name, srcs, deps, external, scalac_jvm_flags, visibility, neverlink, exports, **kwargs):
         |    allexternal = [dep
         |             for ext in external
         |             for dep in dependencies(ext, neverlink)]
         |    realname = ("%s_EXT" % name) if neverlink else name
         |    realdeps = _asNeverlinks(deps) if neverlink else deps
+        |    realexports = _asNeverlinks(exports) if neverlink else exports
         |    calculated_deps = _distinct(realdeps + allexternal)
-        |    calculated_exports = _distinct(allexternal)
+        |    calculated_exports = _distinct(allexternal + realexports)
         |    native_scala_library(
         |        name = realname,
         |        deps = calculated_deps,
@@ -64,18 +65,20 @@ package object templates {
         |        **kwargs
         |    )
         |
-        |def scala_library(name, srcs = None, deps = [], external = [], scalac_jvm_flags = _default_scalac_jvm_flags, visibility = ["//visibility:public"], **kwargs):
+        |def scala_library(name, srcs = None, deps = [], external = [], exports = [], scalac_jvm_flags = _default_scalac_jvm_flags, visibility = ["//visibility:public"], **kwargs):
         |    _scala_library_impl(
         |        name             = name,                   deps       = deps,
         |        external         = external,               srcs       = srcs,
         |        scalac_jvm_flags = scalac_jvm_flags,       visibility = visibility,
-        |        neverlink        = False,                  **kwargs
+        |        neverlink        = False,                  exports    = exports,
+        |        **kwargs
         |    )
         |    _scala_library_impl(
         |        name             = name,                   deps       = deps,
         |        external         = external,               srcs       = srcs,
         |        scalac_jvm_flags = scalac_jvm_flags,       visibility = visibility,
-        |        neverlink        = True,                   **kwargs
+        |        neverlink        = True,                   exports    = exports,
+        |        **kwargs
         |    )
         |    allexternal = [dep
         |             for ext in external
@@ -121,6 +124,7 @@ package object templates {
         |        srcs = srcs,
         |        scalac_jvm_flags = scalac_jvm_flags,
         |        neverlink = False,
+        |        exports = [],
         |        **kwargs
         |    )
         |    allexternal = [dep
