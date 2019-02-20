@@ -9,7 +9,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 package object repo {
 
-  def getAllDependencies(of: List[Coordinates.Versioned], scalaVersionSufix: String): Set[Coordinates.Versioned] = {
+  def getAllDependencies(of: List[Coordinates.Versioned], scalaVersionSufix: String): Set[Coordinates.Versioned] =
+    getAllTransitiveDependencies(of, scalaVersionSufix).flatMap{case (a, bs) => bs + a}
+
+  private def deps(of: List[Coordinates.Versioned], scalaVersionSufix: String): Set[Coordinates.Versioned] = {
     val start = Resolution(of.map(_.asDependency))
     val repositories = Seq(
       MavenRepository("https://repo1.maven.org/maven2")
@@ -22,11 +25,11 @@ package object repo {
   }
 
   def getTransitiveDependencies(of: Coordinates.Versioned, scalaVersionSufix: String, upgrades: Map[Coordinates.Unversioned, Coordinates.Versioned]): Set[Coordinates.Versioned] =
-    getAllDependencies(List(of), scalaVersionSufix).filterNot(_ == of).map{d => upgrades.get(d.unversioned).getOrElse(d) }
+    deps(List(of), scalaVersionSufix).filterNot(_ == of).map{d => upgrades.get(d.unversioned).getOrElse(d) }
 
   def getAllTransitiveDependencies(of: List[Coordinates.Versioned], scalaVersionSufix: String): Set[(Coordinates.Versioned, Set[Coordinates.Versioned])] = {
     val off = of.maxVersions
-    val upgrades = getAllDependencies(off, scalaVersionSufix).map{d => d.unversioned -> d}.toMap
+    val upgrades = deps(off, scalaVersionSufix).map{d => d.unversioned -> d}.toMap
     off.map{v =>
       (upgrades(v.unversioned), getTransitiveDependencies(upgrades(v.unversioned), scalaVersionSufix, upgrades))
     }.toSet

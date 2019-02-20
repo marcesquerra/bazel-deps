@@ -37,8 +37,10 @@ object BazelDepsCli {
                 val allDeps = getAllDependencies(deps.mavenCoordinates, deps.scalaVersionSufix)
                 val target = gen.repoRoot / gen.externalFolder
                 val scalaFolder = gen.repoRoot / "scala"
+
                 (target / "jvm").toFile.mkdirs()
                 scalaFolder.toFile.mkdirs()
+
                 println()
                 println("Going to generate the 'workspace.bzl' file")
                 write(target / "BUILD", "")
