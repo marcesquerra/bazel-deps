@@ -22,7 +22,7 @@ package object repo {
   }
 
   def getTransitiveDependencies(of: Coordinates.Versioned, scalaVersionSufix: String, upgrades: Map[Coordinates.Unversioned, Coordinates.Versioned]): Set[Coordinates.Versioned] =
-    getAllDependencies(List(of), scalaVersionSufix).filterNot(_ == of).map{d => upgrades(d.unversioned) }
+    getAllDependencies(List(of), scalaVersionSufix).filterNot(_ == of).map{d => upgrades.get(d.unversioned).getOrElse(d) }
 
   def getAllTransitiveDependencies(of: List[Coordinates.Versioned], scalaVersionSufix: String): Set[(Coordinates.Versioned, Set[Coordinates.Versioned])] = {
     val off = of.maxVersions
