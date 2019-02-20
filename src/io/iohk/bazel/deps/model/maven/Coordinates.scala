@@ -9,6 +9,7 @@ sealed trait Coordinates {
 
   def asString: String
   def unversioned: Coordinates.Unversioned
+  def skipJari: Boolean = artifactId.scalaVersion.isDefined
 }
 
 object Coordinates {
@@ -72,6 +73,15 @@ object Coordinates {
     override def hashCode: Int = asString.hashCode
 
     def asBazelWorkspaceName(neverlink: Boolean): String =
+      asBazelWorkspaceName(neverlink, true)
+
+    def asBazelLabel(neverlink: Boolean, externalFolder: String): String =
+      if(skipJari)
+        s"//$externalFolder/jvm:${asBazelWorkspaceName(neverlink, false)}"
+      else
+        s"@${asBazelWorkspaceName(neverlink, false)}"
+
+    def asBazelWorkspaceName(neverlink: Boolean, checkForExternal: Boolean): String =
       asString.flatMap {
         case '_' => "__"
         case '.' => "___"
@@ -79,7 +89,7 @@ object Coordinates {
         case '-' => "_ds_"
         case c if c.isLetter || c.isDigit => c.toString
         case otherwise => s"_0x${"%04x".format(otherwise.toInt)}"
-      } + (if (neverlink) "__NEVERLINK" else "")
+      } + (if (checkForExternal && skipJari) "__EXTERNAL" else "") + (if (neverlink) "__NEVERLINK" else "")
 
   }
 }

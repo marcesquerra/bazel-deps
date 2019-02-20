@@ -168,9 +168,9 @@ package object templates {
         |""".stripMargin
   }
 
-  def dependencies(mavenCoordinates: Map[Coordinates.Versioned, Set[Coordinates.Versioned]]): String = {
+  def dependencies(mavenCoordinates: Map[Coordinates.Versioned, Set[Coordinates.Versioned]], externalFolder: String): String = {
     def toEntry(k: Coordinates.Versioned, vs: Set[Coordinates.Versioned], neverlink: Boolean): String =
-      s"""  "${k.unversioned.asCompactString}": ["@${k.unversioned.asBazelWorkspaceName(neverlink)}"${vs.map(_.unversioned.asBazelWorkspaceName(neverlink)).map{v => s""", "@$v""""}.mkString}],"""
+      s"""  "${k.unversioned.asCompactString}": ["${k.unversioned.asBazelLabel(neverlink, externalFolder)}"${vs.map(_.unversioned.asBazelLabel(neverlink, externalFolder)).map{v => s""", "$v""""}.mkString}],"""
     s"""|${notice("# ")}
         |
         |_lookup = {
@@ -280,6 +280,26 @@ package object templates {
         |    </plugins>
         |  </build>
         |</project>
+        |""".stripMargin
+  }
+
+  def jvmBuild(mavenCoordinates: Set[Coordinates.Versioned]): String = {
+    val relevant = mavenCoordinates.toList.filter(_.skipJari).map(_.unversioned)
+    def toImport(u: Coordinates.Unversioned, neverlink: Boolean): String =
+      s"""|scala_import(
+          |    name = "${u.asBazelWorkspaceName(neverlink, false)}",
+          |    jars = [
+          |        "@${u.asBazelWorkspaceName(neverlink, true)}",
+          |    ],
+          |    visibility = ['//visibility:public'],
+          |    neverlink = 0
+          |)
+          |""".stripMargin
+    s"""|${notice("#")}
+        |
+        |load("@io_bazel_rules_scala//scala:scala_import.bzl", "scala_import")
+        |
+        |${relevant.map(u => toImport(u,true) + toImport(u, false)).mkString}
         |""".stripMargin
   }
 

@@ -37,7 +37,7 @@ object BazelDepsCli {
                 val allDeps = getAllDependencies(deps.mavenCoordinates, deps.scalaVersionSufix)
                 val target = gen.repoRoot / gen.externalFolder
                 val scalaFolder = gen.repoRoot / "scala"
-                target.toFile.mkdirs()
+                (target / "jvm").toFile.mkdirs()
                 scalaFolder.toFile.mkdirs()
                 println()
                 println("Going to generate the 'workspace.bzl' file")
@@ -45,14 +45,18 @@ object BazelDepsCli {
                 write(target / "workspace.bzl", templates.workspace(allDeps))
                 println("'workspace.bzl' file generated\n")
                 println("Going to generate the 'deps.bzl' file")
-                write(target / "deps.bzl", templates.dependencies(allTransitiveDeps.toMap))
+                write(target / "deps.bzl", templates.dependencies(allTransitiveDeps.toMap, gen.externalFolder))
                 println("'deps.bzl' file generated\n")
                 println("Going to generate the 'pom.xml' file")
                 write(target / "pom.xml", templates.pom(deps.mavenCoordinates))
                 println("'pom.xml' file generated\n")
                 println("Going to generate the 'scala/rules.bzl' file")
                 write(scalaFolder / "rules.bzl", templates.scala_rules(gen.externalFolder))
+                write(scalaFolder / "BUILD", "")
                 println("'scala/rules.bzl' file generated\n")
+                println("Going to generate the 'jvm/BUILD' file")
+                write(target / "jvm" / "BUILD", templates.jvmBuild(allDeps))
+                println("'jvm/BUILD' file generated\n")
               case Left(err) =>
                 println(err)
             }
