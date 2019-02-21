@@ -1,4 +1,4 @@
-scala_library(name = "tools",
-              srcs = glob(["**/*.scala"], exclude = ["test/**/*"]),
-              visibility = ["//visibility:public"])
+load("//scala:rules.bzl", "scala_library", "scala_test")
+
+scala_library(name = "tools")
 
